@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { ArrowRightCircle } from 'react-bootstrap-icons'
 import headerImg from '../assets/img/header-img2.svg'
@@ -7,23 +7,14 @@ const Banner = () => {
 
   const [loopNum, setLoopNum] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  const toRotate = ['Web Developer', 'Estudante de Ciências da Computação', 'Front-End Developer']
   const [text, setText] = useState('')
   const [delta, setDelta] = useState(100 - Math.random() * 100)
   const period = 2000;
 
-  useEffect(() => {
-    let ticker = setInterval(() => {
-      tick();
-    }, delta);
+  const tick = useCallback(() => {
 
+    const toRotate = ['Web Developer', 'Front-End Developer', 'Computer Science Student'];
 
-    return () => {
-      clearInterval(ticker);
-    }
-  }, [text, delta])
-
-  const tick = () => {
     let i = loopNum % toRotate.length;
     let fullText = toRotate[i];
     let updatedText = isDeleting ? fullText.substring(0, text.length - 1) : fullText.substring(0, text.length + 1);
@@ -42,8 +33,18 @@ const Banner = () => {
       setLoopNum(loopNum + 1);
       setDelta(100);
     }
+  }, [loopNum, isDeleting, text, period])
 
-  }
+  useEffect(() => {
+    let ticker = setInterval(() => {
+      tick();
+    }, delta);
+
+
+    return () => {
+      clearInterval(ticker);
+    }
+  }, [text, delta, tick])
 
   return (
     <section className="banner" id='home'>
